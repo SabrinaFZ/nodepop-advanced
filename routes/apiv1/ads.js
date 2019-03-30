@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // Get all ads (without filter)
-router.get('/ads', async(req, res, next) => {
+router.get('/', async(req, res, next) => {
     try{
         // set query params
         let tags = req.query.tags;
