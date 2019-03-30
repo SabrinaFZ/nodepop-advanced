@@ -4,11 +4,23 @@ const mongoose = require('mongoose');
 
 // define ad schema
 const adSchema = new mongoose.Schema({
-    name: String,
-    sell: Boolean,
-    price: Number,
+    name: {
+        type: String,
+        index: true
+    },
+    sell: {
+        type: Boolean,
+        index: true
+    },
+    price: {
+        type: Number,
+        index: true
+    },
     picture: String,
-    tags: [String]
+    tags: {
+        type: [String],
+        index: true
+    }
 });
 
 // add function to model to filter
