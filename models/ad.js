@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 
+
 // define ad schema
 const adSchema = new mongoose.Schema({
     name: {

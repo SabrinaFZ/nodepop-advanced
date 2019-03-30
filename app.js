@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 
 // middleware nodepop API
-app.use('/apiv1', require('./routes/apiv1/apiv1'));
+app.use('/apiv1', require('./routes/apiv1/ads'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

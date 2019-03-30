@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
-const Ad = require('./../../models/ad');
+const Ad = require('../../models/ad');
 
 router.get('/', async (req, res, next) => {
     res.json({
