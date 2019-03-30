@@ -1,6 +1,7 @@
 // Creamos modelo para usuarios
 
 const mongoose = require('mongoose');
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -9,6 +10,10 @@ const userSchema = new mongoose.Schema({
     },
     password: String
 });
+
+userSchema.statics.hashPassword = (plainPassword) => {
+    return bcrypt.hash(plainPassword, 10);
+}
 
 const userModel = mongoose.model('User', userSchema);
 

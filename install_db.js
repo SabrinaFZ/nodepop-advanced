@@ -1,8 +1,5 @@
 'use script';
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-
 // import database connection
 const db = require('./lib/connectMongoose');
 // import model
@@ -21,9 +18,9 @@ db.once('open', async() => {
         await initModel(Ad, adData, 'ads');
 
         // initialize users model
-        usersData.forEach( async user  => {
-            user.password = await bcrypt.hash(user.password, 10);
-        });
+        for(let i=0; i < usersData.length; i++){
+            usersData[i].password = await User.hashPassword(usersData[i].password);
+        }
 
         await initModel(User, usersData, 'users');
 
