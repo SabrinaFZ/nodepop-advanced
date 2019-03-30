@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Bike",
+        "sell": true,
+        "price": 230.15,
+        "picture": "bici.jpg",
+        "tags": [
+            "lifestyle",
+            "motor"
+        ]
+    },
+    {
+        "name": "iPhone 3GS",
+        "sell": false,
+        "price": 50.00,
+        "picture": "iphone.png",
+        "tags": [
+            "lifestyle",
+            "mobile"
+        ]
+    },
+    {
+        "name": "Car",
+        "sell": false,
+        "price": 5000.00,
+        "picture": "car.png",
+        "tags": [
+            "lifestyle",
+            "motor"
+        ]
+    },
+    {
+        "name": "Clock",
+        "sell": true,
+        "price": 23.67,
+        "picture": "clock.jpg",
+        "tags": [
+            "lifestyle"
+        ]
+    }
+]

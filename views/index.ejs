@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <% if(articles && articles.length > 0){ %>
+      <% articles.forEach(function(value, i) { %>
+      <div>
+        <h2><strong>Ad #
+          <%= i+1 %>
+          </strong>
+        </h2>
+        <p>
+          Product: <%= value.name %>
+        </p>
+        <p>
+          <%= value.sell ? 'To Sell' : 'To Search' %>
+        </p>
+        <p>Price: <%= value.price %>$</p>
+        <p> Tags:
+          <% value.tags.forEach(function(value){ %>
+          <span>
+            <%=value %> </span>
+          <% }) %>
+        </p>
+        <img src="./images/<%= value.picture %>" alt="<%= value.picture %>">
+      </div>
+      <% }) %>
+    <% } %>
+    <div>
+      <% if(tags && tags.length > 0){ %>
+        <h2><strong>Tags</strong></h2>
+        <ul>
+        <% for(let i=0; i < tags.length; i++) { %>
+          <li><%= tags[i] %> 
+        <% } %>
+        </ul>
+      <% } %>
+    </div>
+  </body>
+</html>
