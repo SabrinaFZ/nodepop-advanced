@@ -5,13 +5,6 @@ const router = express.Router();
 
 const Ad = require('../../models/ad');
 
-router.get('/', async (req, res, next) => {
-    res.json({
-        success: true,
-        result: []
-    });
-});
-
 // Get all ads (without filter)
 router.get('/', async(req, res, next) => {
     try{
@@ -41,13 +34,10 @@ router.get('/', async(req, res, next) => {
 
         if(name){
             filter.name = new RegExp('^' + req.query.name, 'i');
-            console.log(filter.name)
         }
 
         // execute filterBy
         let result = await Ad.filterBy(filter, sort, limit, skip);
-
-        console.log(result);
 
         // send back response
         res.json({
@@ -67,8 +57,6 @@ router.post('/ads', async(req, res, next) => {
         let body = req.body;
         let ad =  new Ad(body);
         let result = await ad.save();
-
-        console.log(result);
 
         res.json({
             success: true,

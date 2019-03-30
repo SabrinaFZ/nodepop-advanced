@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
+var jwtAuth = require('./lib/jwtAuth');
 
 var app = express();
 
@@ -32,13 +33,13 @@ app.use((req, res, next) => {
 });
 
 // middleware main site
-app.use('/apiv2', indexRouter);
+app.use('/', jwtAuth(), indexRouter);
 
 // middleware login
 app.use('/apiv1/authenticate', require('./routes/apiv1/auth'))
 
 // middleware nodepop API
-app.use('/apiv1/ads', require('./routes/apiv1/ads'));
+app.use("/apiv1/ads", jwtAuth(), require('./routes/apiv1/ads'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
