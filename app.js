@@ -1,13 +1,14 @@
-'use script';
+'use strict';
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 
-var indexRouter = require('./routes/index');
-var jwtAuth = require('./lib/jwtAuth');
+const indexRouter = require("./routes/index");
+const jwtAuth = require("./lib/jwtAuth");
+const i18n = require('./lib/i18nConfigure')();
 
 var app = express();
 
@@ -21,6 +22,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// use i18n
+app.use(i18n.init);
+
 // connect to database
 require('./lib/connectMongoose');
 
@@ -33,7 +37,10 @@ app.use((req, res, next) => {
 });
 
 // middleware main site
-app.use('/', jwtAuth(), indexRouter);
+app.use('/', indexRouter);
+
+// middleware change language
+app.use('/change-lang', require('./routes/change-lang'));
 
 // middleware login
 app.use('/apiv1/authenticate', require('./routes/apiv1/auth'))
