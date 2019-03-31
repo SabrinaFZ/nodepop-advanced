@@ -21,7 +21,7 @@ router.post( '/', async (req, res, next) => {
         }     
 
         if(!user|| ! await bcrypt.compare(password, user.password)){
-            res.json({
+            res.status(401).json({
                 success: false,
                 error: 'Invalid credentials'
             });
@@ -33,7 +33,7 @@ router.post( '/', async (req, res, next) => {
             expiresIn: 60 * 60 * 24
         });
 
-        res.json({
+        res.status(200).json({
             success: true,
             token: token
         });

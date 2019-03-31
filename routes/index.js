@@ -40,13 +40,10 @@ router.get('/ads', async (req, res, next) => {
 
     if (name) {
       filter.name = new RegExp('^' + req.query.name, 'i');
-      console.log(filter.name)
     }
 
     // execute filterBy
     let result = await Ad.filterBy(filter, sort, limit, skip);
-
-    console.log(result);
 
     // send back response
     res.locals.articles = result;
