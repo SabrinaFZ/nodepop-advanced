@@ -1,13 +1,14 @@
 'use strict';
 
-const jimp = require('jimp');
-const path = require('path');
 const multer = require('multer');
+const connectionRabbitMQ = require('./../../lib/connectRabbitMQ');
 const upload = multer({ storage: multer.memoryStorage() })
 const express = require('express');
 const router = express.Router();
 
 const Ad = require('../../models/ad');
+
+const queueName = 'upload';
 
 // Get all ads (without filter)
 router.get('/', async(req, res, next) => {
@@ -56,13 +57,11 @@ router.get('/', async(req, res, next) => {
 });
 
 // Create new ad
-router.post('/', upload.single('picture'), saveToDisk, async(req, res, next) => {
+router.post('/', upload.single('picture'), saveToDisk,  async(req, res, next) => {
     try {
         let body = req.body;
         let ad =  new Ad(body);
         let result = await ad.save();
-        
-        console.log(body)
         
         res.json({
             success: true,
@@ -133,25 +132,31 @@ function getTags(list){
     return tags;
 }
 
-function saveToDisk(req, res, next) {
-    if (!req.file) {
+async function saveToDisk(req, res, next) {
+
+    try {
+
+        if (!req.file) {
+            next();
+            return;
+        }
+
+        const conn = await connectionRabbitMQ;
+
+        const channel = await conn.createChannel();
+
+        setTimeout(() => {
+            channel.assertQueue(queueName, { durable: true });
+
+            channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(req.file)));
+
+            console.log(`Send file...`);
+        }, 100);
+
         next();
-        return;
+    } catch(err){
+        next(err);
     }
-
-    console.log(req.file)
-
-    const fileName = req.file.originalname.split('.')[0];
-    const extension = req.file.mimetype.split("/")[1];
-    req.body.picture = `${fileName}.${extension}`;
-    
-    const photo = req.file.buffer;
-    jimp.read(photo, function(err, photo) {
-        if (err) throw err;
-        photo.resize(800, jimp.AUTO).write(`./public/images/${req.body.picture}`);
-    });
-    
-    next();
 }
 
 

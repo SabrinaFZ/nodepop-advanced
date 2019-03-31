@@ -28,6 +28,9 @@ app.use(i18n.init);
 // connect to database
 require('./lib/connectMongoose');
 
+// initialize uploadImageService
+require('./lib/uploadFileService')();
+
 // set default local variables
 app.use((req, res, next) => {
   res.locals.title = 'Nodepop';
