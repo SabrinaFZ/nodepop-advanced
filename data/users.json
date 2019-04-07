@@ -1,0 +1,10 @@
+[
+    {
+        "email": "admin@gmail.com",
+        "password": "1234"
+    },
+    {
+        "email": "user@example.com",
+        "password": "1234"
+    }
+]

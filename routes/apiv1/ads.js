@@ -1,19 +1,17 @@
 'use strict';
 
+const multer = require('multer');
+const connectionRabbitMQ = require('./../../lib/connectRabbitMQ');
+const upload = multer({ storage: multer.memoryStorage() })
 const express = require('express');
 const router = express.Router();
 
-const Ad = require('./../../models/ad');
+const Ad = require('../../models/ad');
 
-router.get('/', async (req, res, next) => {
-    res.json({
-        success: true,
-        result: []
-    });
-});
+const queueName = 'upload';
 
 // Get all ads (without filter)
-router.get('/ads', async(req, res, next) => {
+router.get('/', async(req, res, next) => {
     try{
         // set query params
         let tags = req.query.tags;
@@ -23,38 +21,35 @@ router.get('/ads', async(req, res, next) => {
         let name = req.query.name;
         let limit = parseInt(req.query.limit);
         let skip = parseInt(req.query.skip);
-
+        
         // create object to save schema properties to filter
         const filter = {};
-
+        
         if(tags){
             filter.tags = tags;
         }
-
+        
         if(sell){
             filter.sell = sell;
         }
-
+        
         if (price) {
             filter.price = filterPrice(price);
         }
-
+        
         if(name){
             filter.name = new RegExp('^' + req.query.name, 'i');
-            console.log(filter.name)
         }
-
+        
         // execute filterBy
         let result = await Ad.filterBy(filter, sort, limit, skip);
-
-        console.log(result);
-
+        
         // send back response
         res.json({
             success:true,
             result: result
         });
-
+        
     }catch(err){
         console.log('Ups, an error', err);
         process.exit(1);
@@ -62,19 +57,17 @@ router.get('/ads', async(req, res, next) => {
 });
 
 // Create new ad
-router.post('/ads', async(req, res, next) => {
+router.post('/', upload.single('picture'), saveToDisk,  async(req, res, next) => {
     try {
         let body = req.body;
         let ad =  new Ad(body);
         let result = await ad.save();
-
-        console.log(result);
-
+        
         res.json({
             success: true,
             result: result
         });
-
+        
     } catch (err) {
         console.log('Ups, an error', err);
         process.exit(1);
@@ -91,7 +84,7 @@ router.get('/tags', async(req, res, next) => {
             success: true,
             result: tags
         });
-
+        
     } catch (err) {
         console.log('Ups, an error', err);
         process.exit(1);
@@ -104,7 +97,7 @@ function filterPrice(price){
         price = price.split('-');
         let maxPrice = price[0] !== '' ? parseInt(price[0]) : '';
         let minPrice = price[1] !== '' ? parseInt(price[1]) : '';       
-
+        
         if (maxPrice !== '' && minPrice !== '') {
             return {
                 '$gte': maxPrice,
@@ -128,15 +121,42 @@ function getTags(list){
     let tags = [];
     list.forEach((value) => {
         let tagsValue = value.tags;
-
+        
         tagsValue.forEach((tag) => {
             if (!tags.includes(tag)) {
                 tags.push(tag);
             }
         });
     });
-
+    
     return tags;
+}
+
+async function saveToDisk(req, res, next) {
+
+    try {
+
+        if (!req.file) {
+            next();
+            return;
+        }
+
+        const conn = await connectionRabbitMQ;
+
+        const channel = await conn.createChannel();
+
+        setTimeout(() => {
+            channel.assertQueue(queueName, { durable: true });
+
+            channel.sendToQueue(queueName, new Buffer.from(JSON.stringify(req.file)));
+
+            console.log(`Send file...`);
+        }, 100);
+
+        next();
+    } catch(err){
+        next(err);
+    }
 }
 
 

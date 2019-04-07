@@ -5,25 +5,30 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <div>
+      <% getLocales().forEach(locale => { %>
+        <a href="/change-lang/<%=locale%>"><%= locale.toUpperCase() %></a>&nbsp;
+      <% }) %>
+    </div>
     <h1><%= title %></h1>
     <% if(articles && articles.length > 0){ %>
       <% articles.forEach(function(value, i) { %>
       <div>
-        <h2><strong>Ad #
+        <h2><strong><%= __('Ad') %> #
           <%= i+1 %>
           </strong>
         </h2>
         <p>
-          Product: <%= value.name %>
+          <%= __('Product') %>: <%= value.name %>
         </p>
         <p>
-          <%= value.sell ? 'To Sell' : 'To Search' %>
+          <%= value.sell ? __('To Sell') : __('To Search') %>
         </p>
-        <p>Price: <%= value.price %>$</p>
-        <p> Tags:
+        <p><%= __('Price') %>: <%= value.price %>$</p>
+        <p> <%= __('Tags') %>
           <% value.tags.forEach(function(value){ %>
           <span>
-            <%=value %> </span>
+            <%= value %> </span>
           <% }) %>
         </p>
         <img src="./images/<%= value.picture %>" alt="<%= value.picture %>">

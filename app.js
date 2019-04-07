@@ -1,12 +1,14 @@
-'use script';
+'use strict';
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 
-var indexRouter = require('./routes/index');
+const indexRouter = require("./routes/index");
+const jwtAuth = require("./lib/jwtAuth");
+const i18n = require('./lib/i18nConfigure')();
 
 var app = express();
 
@@ -20,8 +22,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// use i18n
+app.use(i18n.init);
+
 // connect to database
 require('./lib/connectMongoose');
+
+// initialize uploadImageService
+require('./lib/uploadFileService')();
 
 // set default local variables
 app.use((req, res, next) => {
@@ -34,8 +42,14 @@ app.use((req, res, next) => {
 // middleware main site
 app.use('/', indexRouter);
 
+// middleware change language
+app.use('/change-lang', require('./routes/change-lang'));
+
+// middleware login
+app.use('/apiv1/authenticate', require('./routes/apiv1/auth'))
+
 // middleware nodepop API
-app.use('/apiv1', require('./routes/apiv1/apiv1'));
+app.use("/apiv1/ads", jwtAuth(), require('./routes/apiv1/ads'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

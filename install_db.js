@@ -1,25 +1,28 @@
 'use script';
 
-const mongoose = require('mongoose');
-
 // import database connection
 const db = require('./lib/connectMongoose');
 // import model
 const Ad = require('./models/ad');
-// import ads data
+const User = require('./models/User');
+// import data
 const adData = require('./data/ads.json');
+const usersData = require('./data/users.json');
 
 // connected to database
 db.once('open', async() => {
     console.log('Reset database...');
     try {
-        // delete tables
-        let resultDeleted = await Ad.deleteMany();
-        console.log(`The number of ads deleted: ${resultDeleted.n}`);
-        
-        // insert default ads data
-        let resultInserted = await Ad.insertMany(adData);
-        console.log(`The number of ads inserted: ${resultInserted.length}`);
+
+        // initialize ads model
+        await initModel(Ad, adData, 'ads');
+
+        // initialize users model
+        for(let i=0; i < usersData.length; i++){
+            usersData[i].password = await User.hashPassword(usersData[i].password);
+        }
+
+        await initModel(User, usersData, 'users');
 
         // close connection
         db.close();
@@ -34,3 +37,15 @@ db.on('error', (err) => {
     console.log('Ups, and error', err);
     process.exit(1);
 });
+
+const initModel = async (model, data, modelName) => {
+    // delete tables
+    let resultDeleted = await model.deleteMany();
+    console.log(`The number of ${modelName} deleted: ${resultDeleted.n}`);
+
+    // insert default ads data
+    let resultInserted = await model.insertMany(data);
+    console.log(
+      `The number of ${modelName} inserted: ${resultInserted.length}`
+    );
+}
