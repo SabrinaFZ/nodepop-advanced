@@ -1,9 +1,16 @@
 # Nodepop
-
-## Description
 This is an api created with Nodejs, Express and MongoDB to provide service to an app called Nodepop.
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+* Install [MongoDB](https://www.mongodb.com/download-center?lang=es-es) - A non-relational database
+
+* Install [RabbitMQ](https://www.rabbitmq.com/) - To run  a messaging broker - an intermediary for messaging
+
+
+### Installing
 
 1. Install the dependencies
 ```sh
@@ -17,51 +24,22 @@ $ npm run installDB
 ```sh
 $ npm run start
 ```
+4. Start RabbitMQ on your machine
 
-## Endpoints
+## API Documentation
 
 - The api is running in http://localhost:3000/apiv1/
 
 - The app is running in http://localhost:3000/
 
-| Param | Value |
-| ----- | ----- |
-| name | string |
-| sell | boolean |
-| price | number |
-| picture | string |
-| tags | work, lifestyle, mobile, motor
+Follow the [API documentation](https://documenter.getpostman.com/view/6434972/S1EJYM99)
 
-&nbsp;
+## Running the tests
 
-| Method | URL | Description
-| ------ | ------ | ------ |
-| GET | /ads | Get all ads without filters
-| GET | /ads?tags=mobile | Get ads by filter tags (without condition)
-| GET | /ads?tags=lifestyle&sort=name | Get ads by filter tags by condition sort
-| GET | /ads?sell=false | Get ads by filter sell |
-| GET | /ads?price=10-50 | Get ads by filter price between 10 and 50
-| GET | /ads?price=10- | Get ads by filter price over 10
-| GET | /ads?price=-50 | Get ads by filter price under 50
-| GET | /ads?name=c | Get ads by filter name |
-| GET | /tags | Get all tags | 
-| GET | /ads?skip=2&limit=2&sort=name | Get all ads paginated by condition sort
-| POST | /ads | Create a new ad |
-
-
-## Examples
-
-### POST
-- Request Body
-
-    | key | value |
-    | ----- | ----- |
-    | name | office suplies |
-    | sell | true |
-    | picture | office-supplies.jpg |
-    | tags | work |
-    | tags | lifestyle |
-    | price | 17.55 |
+### E2E tests
+```
+npm run test
+```
 
 ## Author
 Sabrina Fernandez Zambrano
